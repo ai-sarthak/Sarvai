@@ -1,12 +1,19 @@
 import qrcode
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, Form, UploadFile
 from PIL import Image
 from io import BytesIO
+from fastapi.responses import StreamingResponse
 
 app = FastAPI()
 
 @app.post("/generate_qr/")
-async def generate_qr(data: str, color: str = "#000000", background: str = "#FFFFFF", bg_img: UploadFile = None, embed_img: UploadFile = None):
+async def generate_qr(
+    data: str = Form(...),
+    color: str = Form("#000000"),
+    background: str = Form("#FFFFFF"),
+    bg_img: UploadFile = File(None),
+    embed_img: UploadFile = File(None)
+):
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_H,

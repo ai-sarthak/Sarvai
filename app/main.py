@@ -8,7 +8,7 @@ app = FastAPI()
 
 @app.post("/generate_qr/")
 async def generate_qr(
-    data: str = Form(...),
+    data: str = Form("aaa"),
     color: str = Form("#000000"),
     background: str = Form("#FFFFFF"),
     bg_img: UploadFile = File(None),

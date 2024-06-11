@@ -8,7 +8,7 @@ app = FastAPI()
 
 @app.post("/generate_qr/")
 async def generate_qr(
-    data: str = Form("aaa"),
+    qr_data: str = Form("aaa"),
     color: str = Form("#000000"),
     background: str = Form("#FFFFFF"),
     bg_img: UploadFile = File(None),
@@ -18,7 +18,7 @@ async def generate_qr(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_H,
     )
-    qr.add_data(data)
+    qr.add_data(qr_data)
     qr.make(fit=True)
     qr_img = qr.make_image(fill_color=color, back_color=background).convert("RGBA")
 

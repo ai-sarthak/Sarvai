@@ -1,48 +1,19 @@
 import qrcode
-from fastapi import FastAPI, File, Form, UploadFile, HTTPException
+from fastapi import FastAPI, File, Form, UploadFile
 from PIL import Image
 from io import BytesIO
 from fastapi.responses import StreamingResponse
-from aiomysql import create_pool
 
 app = FastAPI()
 
-# Database connection details
-DB_HOST = "localhost"
-DB_USER = "id22250032_sarvaiadmin"
-DB_PASSWORD = "Bappa@21"
-DB_NAME = "id22250032_sarvai"
-
-
-async def validate_api_key(api_key: str):
-    # Establish the database connection
-    pool = await create_pool(host=DB_HOST, port=3306, user=DB_USER, password=DB_PASSWORD, db=DB_NAME)
-    async with pool.acquire() as conn:
-        async with conn.cursor() as cur:
-            await cur.execute("SELECT services FROM users WHERE api = %s", (api_key,))
-            result = await cur.fetchone()
-    pool.close()
-    if result:
-        allocated_services = result[0].split(',')
-        if "QR Code Generator" in allocated_services:
-            return True
-    return False
-
 @app.post("/generate_qr/")
 async def generate_qr(
-    api_key: str = Form(...),
-    qr_data: str = Form(...),
+    qr_data: str = Form("aaa"),
     color: str = Form("#000000"),
     background: str = Form("#FFFFFF"),
     bg_img: UploadFile = File(None),
     embed_img: UploadFile = File(None)
 ):
-    # Validate API key
-    if not await validate_api_key(api_key):
-        raise HTTPException(status_code=401, detail="Invalid API key or service not allocated")
-
-
-    # Generate QR code
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_H,
